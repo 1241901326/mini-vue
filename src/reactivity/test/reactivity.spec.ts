@@ -16,3 +16,18 @@ it("reactivit",()=>{
   })
   myObj.age ++
 })
+
+it(" effect return runner ",()=>{
+  //effect 有一个返回值
+  let num  = 10
+ const runner =  effect(()=>{
+   num++
+   return 'back'
+  })
+  expect(num).toBe(11)
+const r = runner()
+expect(num).toBe(12)
+expect(r).toBe('back')
+
+
+})

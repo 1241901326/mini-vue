@@ -1,4 +1,4 @@
-
+let activiteEffect;
 class ReactiveEffect {
   private _fn:any
   constructor(fn){
@@ -7,19 +7,18 @@ class ReactiveEffect {
   run() {
     //将自己赋值给activiteEffect
     activiteEffect = this
-    this._fn()
+   return this._fn()
   }
 }
 
 export function  effect(fn){
   //注册
   let _effect = new ReactiveEffect(fn);
+  _effect.run()
   //调用
-   _effect.run()
+  return _effect.run.bind(_effect)
 }
-
 let allMap = new Map()
-let activiteEffect;
 //收集依赖
 export function track(target,key){
   let depMaps = allMap.get(target)
