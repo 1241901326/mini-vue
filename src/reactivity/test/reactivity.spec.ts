@@ -1,5 +1,5 @@
 import {reactive} from "../reactivity"
-import {effect} from "../effect"
+import {effect,stop} from "../effect"
 
 
 it("reactivit",()=>{
@@ -28,6 +28,44 @@ it(" effect return runner ",()=>{
 const r = runner()
 expect(num).toBe(12)
 expect(r).toBe('back')
-
-
 })
+
+
+it('scheduler 调度器',()=>{
+  let dummy
+  let run:any
+  const obj = reactive({
+    foo:1
+  })
+  const scheduler = jest.fn(()=>{
+    run = runner
+  })
+  const runner = effect(()=>{
+    dummy =obj.foo
+  },{scheduler})
+ 
+  expect(scheduler).not.toHaveBeenCalled()  //没有执行
+  expect(dummy).toBe(1)
+  obj.foo++
+  expect(scheduler).toHaveBeenCalledTimes(1)
+  expect(dummy).toBe(1)
+  run()
+  expect(dummy).toBe(2)
+  
+})
+it("stop", () => {
+  let dummy;
+  const obj = reactive({ prop: 1 });
+  const runner = effect(() => {
+    dummy = obj.prop;
+  });
+  obj.prop = 2;
+  expect(dummy).toBe(2);
+  stop(runner);
+  obj.prop = 3;
+  // obj.prop++;
+  expect(dummy).toBe(2);
+  // stopped effect should still be manually callable
+  runner();
+  expect(dummy).toBe(3);
+});
