@@ -1,6 +1,21 @@
 import {reactive} from "../reactivity"
 import {effect,stop} from "../effect"
 
+// 监听函数的配置项
+export interface ReactiveEffectOptions {
+  // 延迟计算，为true时候，传入的effect不会立即执行。
+  lazy?: boolean
+  // 是否是computed数据依赖的监听函数
+  computed?: boolean
+  // 调度器函数，接受的入参run即是传给effect的函数，如果传了scheduler，则可通过其调用监听函数。
+  scheduler?: (run: Function) => void
+  // **仅供调试使用**。在收集依赖(get阶段)的过程中触发。
+  onTrack?: (event: DebuggerEvent) => void
+  // **仅供调试使用**。在触发更新后执行监听函数之前触发。
+  onTrigger?: (event: DebuggerEvent) => void
+  //通过 `stop` 终止监听函数时触发的事件。
+  onStop?: () => void
+}
 
 it("reactivit",()=>{
   let myObj = reactive({
@@ -30,7 +45,7 @@ expect(num).toBe(12)
 expect(r).toBe('back')
 })
 
-
+//有scheduler执行scheduler 不执行run 但是会初始化
 it('scheduler 调度器',()=>{
   let dummy
   let run:any
@@ -43,8 +58,7 @@ it('scheduler 调度器',()=>{
   const runner = effect(()=>{
     dummy =obj.foo
   },{scheduler})
- 
-  expect(scheduler).not.toHaveBeenCalled()  //没有执行
+  expect(scheduler).toHaveBeenCalledTimes(0)  //没有执行
   expect(dummy).toBe(1)
   obj.foo++
   expect(scheduler).toHaveBeenCalledTimes(1)
@@ -63,9 +77,30 @@ it("stop", () => {
   expect(dummy).toBe(2);
   stop(runner);
   obj.prop = 3;
-  // obj.prop++;
+  //obj.prop ==  obj.prop =obj.prop + 1 在get的时候也需要删除
+  obj.prop++;
   expect(dummy).toBe(2);
   // stopped effect should still be manually callable
   runner();
-  expect(dummy).toBe(3);
+  expect(dummy).toBe(4);
+});
+
+//其实这个功能很简单，就是在执行stop的时候，会调用effect传入onStop函数 在stop内部执行onstop
+it("onStop", () => {
+  const obj = reactive({
+    foo: 1,
+  });
+  const onStop = jest.fn();
+  let dummy;
+  const runner = effect(
+    () => {
+      dummy = obj.foo;
+    },
+    {
+      onStop,
+    }
+  );
+  expect(dummy).toBe(1)
+  stop(runner);
+  expect(onStop).toBeCalledTimes(1);
 });

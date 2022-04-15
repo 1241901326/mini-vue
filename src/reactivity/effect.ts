@@ -3,6 +3,7 @@ class ReactiveEffect {
   private _fn:any
   deps = []
   active= true
+  onStop?: () => void;
   constructor(fn,public scheduler?){
     this._fn = fn;
   }
@@ -17,26 +18,22 @@ class ReactiveEffect {
       this.deps.forEach((dep:any) => {
         dep.delete(this)
       })
+      if(this.onStop){
+        this.onStop();
+      }
       this.active = false
     }
-
   }
 }
 
-export function  effect(fn,options?){
-  let _effect 
-if(options){
-  const scheduler = options.scheduler
-  //注册
-  _effect = new ReactiveEffect(fn,scheduler);
-}  else {
-   _effect = new ReactiveEffect(fn);
-}
-    _effect.run()
-    const runner  = _effect.run.bind(_effect)
-    runner.effect = _effect
-  //调用
-  return runner
+export function  effect(fn,options:any ={}){
+  const _effect = new ReactiveEffect(fn, options.scheduler);
+  //将options中的 包括onstop  lazy onTrack onTrigger computed 赋值到effect中
+  Object.assign(_effect, options);
+  _effect.run();
+  const runner: any = _effect.run.bind(_effect);
+  runner.effect = _effect;
+  return runner;
 }
 let allMap = new Map()
 //收集依赖
@@ -52,7 +49,10 @@ export function track(target,key){
     depMaps.set(key,dep)
   }
   if(!activiteEffect) return 
-  dep.add(activiteEffect)
+
+  if(activiteEffect.active){
+    dep.add(activiteEffect)
+  }
   activiteEffect.deps.push(dep)
 }
 
