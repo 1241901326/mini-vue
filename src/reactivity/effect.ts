@@ -1,4 +1,5 @@
 let activiteEffect;
+let shouldTrack = false; //是否应该收集依赖
 class ReactiveEffect {
   private _fn:any
   deps = []
@@ -8,9 +9,15 @@ class ReactiveEffect {
     this._fn = fn;
   }
   run() {
+    if(!this.active){
+      return this._fn()
+    }
+    shouldTrack =true
     //将自己赋值给activiteEffect
    activiteEffect = this
-   return this._fn()
+   let result = this._fn()
+   shouldTrack = false
+   return result
   }
   stop() {
     //拥有effect所有的dep,反向删除。 我effect删除你的dep， dep是所有的reactive内容
@@ -38,6 +45,7 @@ export function  effect(fn,options:any ={}){
 let allMap = new Map()
 //收集依赖
 export function track(target,key){
+  if(!activiteEffect||!shouldTrack) return 
   let depMaps = allMap.get(target)
   if(!depMaps){
     depMaps = new Map()
@@ -48,8 +56,6 @@ export function track(target,key){
     dep  = new Set()
     depMaps.set(key,dep)
   }
-  if(!activiteEffect) return 
-
   if(activiteEffect.active){
     dep.add(activiteEffect)
   }
