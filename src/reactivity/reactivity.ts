@@ -3,7 +3,7 @@ import {track,trigger} from "./effect"
 import {
   mutableHandlers,
   readonlyHandlers,
-  // shallowReadonlyHandlers,
+  shallowReadonlyHandlers,
 } from "./baseHandler";
 import { ReactiveFlags } from './baseHandler';
 export function reactive(raw){
@@ -16,4 +16,13 @@ export function readonly(raw){
 
 export function isReactive(value){
   return !!value[ReactiveFlags.IS_REACTIVE]   
+}
+export function isReadonly(value){
+  return !!value[ReactiveFlags.IS_ONLY]   
+}
+export function shallowReadonly(raw) {
+  return new Proxy(raw,shallowReadonlyHandlers)
+}
+export function isProxy(value){
+  return !!value[ReactiveFlags.IS_PROXY]
 }

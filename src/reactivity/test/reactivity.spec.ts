@@ -1,4 +1,4 @@
-import {reactive} from "../reactivity"
+import {reactive,isProxy} from "../reactivity"
 import {effect,stop} from "../effect"
 
 // 监听函数的配置项
@@ -19,7 +19,10 @@ export interface ReactiveEffectOptions {
 
 it("reactivit",()=>{
   let myObj = reactive({
-    age:10
+    age:10,
+    obj:{
+      name:'222'
+    }
   })
   let  sumAge
   expect(myObj.age).toBe(10)
@@ -28,6 +31,8 @@ it("reactivit",()=>{
   effect(()=>{
      sumAge = myObj.age
   })
+  expect(isProxy(myObj)).toBe(true)
+  expect(isProxy(myObj.obj)).toBe(true)
   myObj.age ++
 })
 
