@@ -4,9 +4,16 @@ import { track,trigger } from './effect'
 const set = createSetter()
 const get = createGetter()
 const getOnly = createGetter(true)
+export const enum ReactiveFlags {
+  IS_REACTIVE='is_reactive',
+  IS_ONLY = 'is_only'
+}
 export function createGetter(isOnly = false){
   return function get(target,key) {
     let result = Reflect.get(target,key)
+    if(key == ReactiveFlags.IS_REACTIVE){
+      return !isOnly
+    }
     if(!isOnly){
       track(target,key)
     }
