@@ -27,7 +27,6 @@ it("reactivit",()=>{
   expect(myObj.age).toBe(11)
   effect(()=>{
      sumAge = myObj.age
-     console.log(sumAge)
   })
   myObj.age ++
 })
@@ -67,6 +66,7 @@ it('scheduler 调度器',()=>{
   expect(dummy).toBe(2)
   
 })
+//stop以后删除依赖
 it("stop", () => {
   let dummy;
   const obj = reactive({ prop: 1 });
@@ -83,24 +83,4 @@ it("stop", () => {
   // stopped effect should still be manually callable
   runner();
   expect(dummy).toBe(4);
-});
-
-//其实这个功能很简单，就是在执行stop的时候，会调用effect传入onStop函数 在stop内部执行onstop
-it("onStop", () => {
-  const obj = reactive({
-    foo: 1,
-  });
-  const onStop = jest.fn();
-  let dummy;
-  const runner = effect(
-    () => {
-      dummy = obj.foo;
-    },
-    {
-      onStop,
-    }
-  );
-  expect(dummy).toBe(1)
-  stop(runner);
-  expect(onStop).toBeCalledTimes(1);
 });
