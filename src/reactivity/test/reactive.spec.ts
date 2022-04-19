@@ -1,4 +1,4 @@
-import {reactive,isProxy} from "../reactivity"
+import {reactive,isProxy} from "../reactive"
 import {effect,stop} from "../effect"
 
 // 监听函数的配置项

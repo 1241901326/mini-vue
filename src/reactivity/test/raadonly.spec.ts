@@ -1,5 +1,5 @@
 
-import { reactive, readonly,isReactive,isReadonly,isProxy}from "../reactivity"
+import { reactive, readonly,isReactive,isReadonly,isProxy}from "../reactive"
 
 it("readonly",()=>{
   let obj = readonly({

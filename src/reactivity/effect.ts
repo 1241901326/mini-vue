@@ -3,6 +3,7 @@ let shouldTrack = false; //是否应该收集依赖
 class ReactiveEffect {
   private _fn:any
   deps = []
+  
   active= true
   onStop?: () => void;
   constructor(fn,public scheduler?){
@@ -45,7 +46,7 @@ export function  effect(fn,options:any ={}){
 let allMap = new Map()
 //收集依赖
 export function track(target,key){
-  if(!activiteEffect||!shouldTrack) return 
+  if(!isTracking()) return 
   let depMaps = allMap.get(target)
   if(!depMaps){
     depMaps = new Map()
@@ -56,6 +57,13 @@ export function track(target,key){
     dep  = new Set()
     depMaps.set(key,dep)
   }
+  refTrack(dep)
+
+}
+export function isTracking(){
+  return shouldTrack && activiteEffect !== undefined;
+}
+export function refTrack(dep){
   if(activiteEffect.active){
     dep.add(activiteEffect)
   }
@@ -74,15 +82,18 @@ export function trigger(target,key){
     dep  = new Set()
     depMaps.set(key,dep)
   }
-  //防止有undefined出现导致找不到run,同时触发多个dep
-   for (const effect of dep){
-     if(!effect){return}
-      if(effect.scheduler){
-        effect.scheduler()
-       }else {
-        effect.run()
-       }
-   }
+  refTrigger(dep)
+
+}
+export function refTrigger(dep) {
+    //防止有undefined出现导致找不到run,同时触发多个dep
+    for (const effect of dep){
+       if(effect.scheduler){
+         effect.scheduler()
+        }else {
+         effect.run()
+        }
+    }
 }
 
 export function stop(runner){

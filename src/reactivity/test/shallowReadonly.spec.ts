@@ -1,4 +1,4 @@
-import { isReadonly, shallowReadonly } from "../reactivity";
+import { isReadonly, shallowReadonly } from "../reactive";
 
 //类似 readOnly 但是内部不是响应式 。
 describe("shallowReadonly", () => {
