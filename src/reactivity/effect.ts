@@ -1,6 +1,6 @@
 let activiteEffect;
 let shouldTrack = false; //是否应该收集依赖
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn:any
   deps = []
   
@@ -13,7 +13,7 @@ class ReactiveEffect {
     if(!this.active){
       return this._fn()
     }
-    shouldTrack =true
+   shouldTrack =true
     //将自己赋值给activiteEffect
    activiteEffect = this
    let result = this._fn()
