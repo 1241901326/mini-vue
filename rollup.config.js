@@ -1,19 +1,19 @@
-import pkg from "./package.json";
-import typescript from "@rollup/plugin-typescript";
+import { main, module } from './package.json';
+import typescript from '@rollup/plugin-typescript';
 export default {
-  input: "./src/index.ts",
+  input: './src/index.ts',
   output: [
     // 1. cjs -> commonjs
     // 2. esm
     {
-      format: "cjs",
-      file: pkg.main,
+      format: 'cjs',
+      file: main
     },
     {
-      format: "es",
-      file: pkg.module,
-    },
+      format: 'es',
+      file: module
+    }
   ],
 
-  plugins: [typescript()],
+  plugins: [typescript()]
 };

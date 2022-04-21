@@ -2,20 +2,6 @@ import {reactive,isProxy} from "../reactive"
 import {effect,stop} from "../effect"
 
 // 监听函数的配置项
-export interface ReactiveEffectOptions {
-  // 延迟计算，为true时候，传入的effect不会立即执行。
-  lazy?: boolean
-  // 是否是computed数据依赖的监听函数
-  computed?: boolean
-  // 调度器函数，接受的入参run即是传给effect的函数，如果传了scheduler，则可通过其调用监听函数。
-  scheduler?: (run: Function) => void
-  // **仅供调试使用**。在收集依赖(get阶段)的过程中触发。
-  onTrack?: (event: DebuggerEvent) => void
-  // **仅供调试使用**。在触发更新后执行监听函数之前触发。
-  onTrigger?: (event: DebuggerEvent) => void
-  //通过 `stop` 终止监听函数时触发的事件。
-  onStop?: () => void
-}
 
 it("reactivit",()=>{
   let myObj = reactive({
