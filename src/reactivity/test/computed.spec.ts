@@ -7,7 +7,7 @@ describe("computed", () => {
       age: 1,
     });
 
-    const age = computed(() => {
+    let age:any = computed(() => {
       return user.age;
     });
 

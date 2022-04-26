@@ -4,6 +4,7 @@ export function creatApp(rootComponent){
   //虚拟节点
   return{
     mount(rootController){
+      console.log('rootController===>',rootController)
       //先转化为虚拟节点，后续操作都基于虚拟节点
       //component -> vnode
      const vnode = creatVNode(rootComponent)

@@ -21,7 +21,7 @@ export function mountComponent(vnode,container){
   const instance = createComponentInstance(vnode)
 
   setupComponent(instance)
-   setupRenderEffect(instance,container)
+  setupRenderEffect(instance,container)
 
 
 }
@@ -82,13 +82,24 @@ export function processElement(vnode: any,container) {
 }
 
 export function mountElement(vnode: any,container) {
-  const {type,children,props} = vnode
+  const {type,chinldren,prop} = vnode
+  console.log(vnode,'vnode')
   const el = document.createElement(type)
-  el.textContent = children
-  for (const key in props){
-    el.setAttribute(key, props[key])
+  if(typeof chinldren == 'string'){
+    el.textContent = chinldren
   }
-  container.append(el)
-  document.append(el)
+  else if(chinldren instanceof  Array) {
+    chinldren.forEach(
+     item => {
+       patch(item,el)
+     }
+    )
+  }
+  for (const key in prop){
+    el.setAttribute(key, prop[key])
+  }
+   console.log(el,'el')
+   container.append(el)
+
 }
 
